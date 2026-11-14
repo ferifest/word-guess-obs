@@ -14,19 +14,34 @@ objects:["КОМПЬЮТЕР","ТЕЛЕФОН","МОНИТОР","КЛАВИАТ�
 characters:["ПИКАЧУ","МАРИО","СОНИК","ШРЕК","БЭТМЕН","ЧЕЛОВЕКПАУК","ГАРРИПОТТЕР"],
 tech:["ПРОЦЕССОР","ВИДЕОКАРТА","ИНТЕРНЕТ","РОУТЕР","ПЛАНШЕТ","НОУТБУК","КОНСОЛЬ"]
 };
-let words=[],word="",mask=[],round=0,playing=false,solved=false,hintTimer=null,attempts=[],socket=null,manualStop=false,tournament=0,tournamentRound=0;
+let words=[],word="",mask=[],round=0,playing=false,solved=false,hintTimer=null,attempts=[],socket=null,manualStop=false,tournament=0,tournamentRound=0,currentCategory="";
+const categoryNames={animals:"ЖИВОТНЫЕ",food:"ЕДА",places:"СТРАНЫ И ГОРОДА",games:"ВИДЕОИГРЫ",objects:"ПРЕДМЕТЫ",characters:"ПЕРСОНАЖИ",tech:"ТЕХНИКА",custom:"СВОИ СЛОВА"};
 function norm(s){return s.toLocaleUpperCase("ru-RU").replace(/Ё/g,"Е").replace(/[^А-ЯA-Z0-9]/g,"")}
-function pickWords(){
- let pool=theme==="all"?Object.values(banks).flat():(banks[theme]||Object.values(banks).flat());
- const custom=(p.get("words")||"").split(/[\n,;]+/).map(norm).filter(x=>x.length>=3&&x.length<=20);
- pool=[...new Set([...pool,...custom])];
- return pool.filter(w=>difficulty==="short"?w.length>=4&&w.length<=5:difficulty==="medium"?w.length>=6&&w.length<=7:difficulty==="long"?w.length>=8&&w.length<=10:true);
+function filterLength(pool){return pool.filter(w=>w.length>=4&&w.length<=10&&(difficulty==="short"?w.length<=5:difficulty==="medium"?w.length>=6&&w.length<=7:difficulty==="long"?w.length>=8:true))}
+function getPool(){
+ const custom=(p.get("words")||"").split(/[\\n,;]+/).map(norm).filter(x=>x.length>=4&&x.length<=10);
+ const keys=theme==="all"?Object.keys(banks):[theme];
+ const result={};
+ keys.forEach(k=>{if(banks[k])result[k]=filterLength(banks[k]);});
+ if(custom.length)result.custom=filterLength(custom);
+ return Object.fromEntries(Object.entries(result).filter(([,v])=>v.length));
 }
-words=pickWords();
+let pools=getPool();
+function chooseWord(){
+ const available=Object.keys(pools);
+ if(!available.length)return null;
+ const key=available[Math.floor(Math.random()*available.length)];
+ const list=pools[key];
+ const w=list[Math.floor(Math.random()*list.length)];
+ pools[key]=list.filter(x=>x!==w);
+ if(!pools[key].length)delete pools[key];
+ if(!Object.keys(pools).length)pools=getPool();
+ return {word:w,category:key};
+}
 function setStatus(s){$("status").textContent=s}
 function render(){
  $("round").textContent=tournament?("ТУРНИР "+tournamentRound+"/"+tournament):("РАУНД "+round);
- $("category").textContent=theme==="all"?"СЛУЧАЙНАЯ ТЕМА":({animals:"ЖИВОТНЫЕ",food:"ЕДА",places:"СТРАНЫ И ГОРОДА",games:"ИГРЫ",objects:"ПРЕДМЕТЫ",characters:"ПЕРСОНАЖИ",tech:"ТЕХНИКА"}[theme]||"СВОИ СЛОВА");
+ $("category").textContent="ТЕМА — "+(categoryNames[currentCategory]||"СЛОВА");
  $("countdown").textContent=playing?"НОВАЯ БУКВА ЧЕРЕЗ "+Math.ceil(nextHint/1000)+" СЕК.":"ОЖИДАНИЕ ОТВЕТА";
  $("length").textContent="Букв: "+(word?word.length:"—");
  $("hintInfo").textContent=word?"Открыто букв: "+mask.filter(x=>x!=="•").length:"";
