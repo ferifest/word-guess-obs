@@ -1,5 +1,32 @@
-# Word Guess OBS
+# Word Guess OBS — v1.3
 
-Twitch word guessing overlay for OBS. Node.js + WebSocket server, setup website, and Render deployment blueprint.
+Компактный виджет для угадывания слов в Twitch-чате и сайт настройки OBS.
 
-See deployment instructions in the full project README.
+## Что входит
+- Node.js HTTP + WebSocket сервер для Twitch IRC.
+- Сайт настройки канала, тем, сложности, цвета, размера и интервала подсказок.
+- OBS Browser Source с компактным оверлеем шириной по умолчанию 1000 px.
+- Команды Twitch: `!угадай старт`, `!угадай подсказка`, `!угадай стоп`, `!угадай турнир 5`, `!угадай статус`.
+- Render Blueprint, Dockerfile, примеры конфигурации.
+
+## Локальный запуск
+Требуется Node.js 18+:
+```bash
+npm install
+npm start
+```
+Открой `http://localhost:3000/`.
+
+## Публикация
+GitHub Pages не запускает Node.js или WebSocket. Для живого Twitch-оверлея используй Render Web Service через включённый `render.yaml`:
+1. Подключи этот репозиторий в Render как Blueprint.
+2. Задай переменную окружения `ADMIN_KEY` (длинный пароль).
+3. Оставь `DATA_DIR=/var/data` и persistent disk из Blueprint.
+4. После деплоя открой URL сервиса, настрой канал и скопируй выданную HTTPS-ссылку в OBS → Browser Source.
+5. Размер по умолчанию — 1000 × 300 px.
+
+## Ограничения
+- Один экземпляр сервера обслуживает один Twitch-канал и одну игру.
+- На публичном хостинге обязательно задай `ADMIN_KEY`.
+- Анонимное Twitch IRC-подключение используется для чтения чата; отправка сообщений ботом требует отдельной авторизации.
+- Перед эфиром проверь подключение Twitch и OBS на своём хостинге.
