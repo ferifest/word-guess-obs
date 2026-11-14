@@ -54,11 +54,14 @@ function render(){
 }
 let nextHint=interval*1000;
 function startRound(){
- if(!words.length){setStatus("Нет слов для выбранной длины");return}
- clearInterval(hintTimer);word=words[Math.floor(Math.random()*words.length)];words=words.filter(x=>x!==word);if(!words.length)words=pickWords();
- mask=[...word].map(()=> "•");if(mask.length){const first=Math.floor(Math.random()*mask.length);mask[first]=word[first];}
+ const chosen=chooseWord();
+ if(!chosen){setStatus("Для выбранной темы нет слов подходящей длины");return}
+ clearInterval(hintTimer);word=chosen.word;currentCategory=chosen.category;
+ mask=[...word].map(()=> "•");
+ const positions=[...Array(mask.length).keys()];
+ for(let n=0;n<2&&positions.length;n++){const pick=Math.floor(Math.random()*positions.length);const index=positions.splice(pick,1)[0];mask[index]=word[index];}
  round++;playing=true;solved=false;attempts=[];nextHint=interval*1000;setStatus("Слово загадано — пишите ответы в чат");render();
- hintTimer=setInterval(()=>{if(!playing)return;let hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i];}nextHint=interval*1000;render();},interval*1000);
+ hintTimer=setInterval(()=>{if(!playing)return;const hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i];}nextHint=interval*1000;render();},interval*1000);
  const tick=setInterval(()=>{if(!playing){clearInterval(tick);return}nextHint=Math.max(0,nextHint-1000);render();},1000);
 }
 function stop(){playing=false;clearInterval(hintTimer);setStatus("Игра остановлена");render()}
