@@ -41,7 +41,7 @@ let nextHint=interval*1000;
 function startRound(){
  if(!words.length){setStatus("Нет слов для выбранной длины");return}
  clearInterval(hintTimer);word=words[Math.floor(Math.random()*words.length)];words=words.filter(x=>x!==word);if(!words.length)words=pickWords();
- mask=[...word].map(()=> "•");if(mask.length)mask[Math.floor(Math.random()*mask.length)]=word[Math.floor(Math.random()*mask.length)];
+ mask=[...word].map(()=> "•");if(mask.length){const first=Math.floor(Math.random()*mask.length);mask[first]=word[first];}
  round++;playing=true;solved=false;attempts=[];nextHint=interval*1000;setStatus("Слово загадано — пишите ответы в чат");render();
  hintTimer=setInterval(()=>{if(!playing)return;let hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i];}nextHint=interval*1000;render();},interval*1000);
  const tick=setInterval(()=>{if(!playing){clearInterval(tick);return}nextHint=Math.max(0,nextHint-1000);render();},1000);
