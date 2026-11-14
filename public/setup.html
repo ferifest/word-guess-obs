@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Guess — настройка OBS</title><link rel="stylesheet" href="/style.css"></head>
+<body class="setup-body">
+<main class="setup-wrap">
+<header class="setup-header"><div class="setup-logo"><span class="brand-dot"></span> WORD GUESS</div><span class="setup-tag">TWITCH × OBS</span></header>
+<section class="hero">
+ <div class="hero-copy"><div class="eyebrow">ИНТЕРАКТИВНАЯ ИГРА ДЛЯ СТРИМА</div><h1>Пусть чат<br><em>угадывает слова.</em></h1>
+ <p>Зрители отправляют варианты прямо в Twitch-чате. За правильный ответ участник выигрывает раунд, а новые буквы постепенно открываются автоматически.</p>
+ <div class="hero-pills"><span>Без таймера раунда</span><span>Автоподсказки</span><span>Управление из чата</span></div></div>
+ <div class="preview-card"><div class="preview-caption"><span>ПРЕДПРОСМОТР ОВЕРЛЕЯ</span><span class="preview-live">● LIVE PREVIEW</span></div>
+  <div class="preview-frame"><div class="preview-brand">● WORD GUESS <small>РАУНД 08</small></div><div class="preview-cat">ПЕРСОНАЖИ <b>НОВАЯ БУКВА ЧЕРЕЗ 12 СЕК.</b></div><div class="preview-tiles"><i>•</i><i>•</i><i>•</i><strong>А</strong><strong>Ч</strong><strong>У</strong></div><div class="preview-count">Букв: 6</div><div class="preview-attempt"><b>ПОСЛЕДНИЕ ПОПЫТКИ</b><span>Пока никто не отвечал</span></div></div>
+  <p class="preview-note">Пример внешнего вида. Реальный оверлей обновляется в реальном времени.</p>
+ </div>
+</section>
+<section class="builder">
+ <div class="builder-heading"><div><div class="eyebrow">БЫСТРАЯ НАСТРОЙКА</div><h2>Создать свой оверлей</h2></div><span class="step">01 / 03</span></div>
+ <div class="builder-grid">
+  <div class="builder-main">
+   <div class="field"><label for="channel">Twitch-канал</label><input id="channel" placeholder="Введите логин канала, например ferifest" autocomplete="off"><small>Указывай логин без @ и без ссылки на канал.</small></div>
+   <div class="field"><label for="adminKey">Пароль управления сайтом</label><input id="adminKey" type="password" placeholder="Пароль ADMIN_KEY с хостинга" autocomplete="current-password"><small>Нужен только для сохранения настроек. Задаётся в Render → Environment → ADMIN_KEY.</small></div>
+   <div class="settings-grid">
+    <div class="field"><label for="theme">Тематика слов</label><select id="theme"><option>Случайная тема</option><option>Животные</option><option>Еда</option><option>Страны и города</option><option>Игры</option><option>Предметы</option><option>Персонажи</option><option>Техника</option></select></div>
+    <div class="field"><label for="difficulty">Сложность / длина</label><select id="difficulty"><option>Любая длина</option><option>4–5 букв</option><option>6–7 букв</option><option>8–10 букв</option></select></div>
+    <div class="field"><label for="hintInterval">Новая буква каждые</label><select id="hintInterval"><option value="10">10 секунд</option><option value="15" selected>15 секунд</option><option value="20">20 секунд</option><option value="30">30 секунд</option><option value="45">45 секунд</option></select></div>
+    <div class="field"><label for="accent">Цвет подсветки</label><select id="accent"><option value="#ff955f">Оранжевый</option><option value="#65a9ff">Синий</option><option value="#71d6a0">Зелёный</option><option value="#c28cff">Фиолетовый</option><option value="#f06b8b">Розовый</option></select></div>
+    <div class="field"><label for="overlayWidth">Ширина источника OBS</label><select id="overlayWidth"><option value="900">900 px</option><option value="1000" selected>1000 px</option><option value="1100">1100 px</option><option value="1200">1200 px</option></select></div>
+    <div class="field"><label for="overlayHeight">Высота источника OBS</label><select id="overlayHeight"><option value="260">260 px</option><option value="280">280 px</option><option value="300" selected>300 px</option><option value="320">320 px</option><option value="340">340 px</option><option value="400">400 px</option><option value="460">460 px</option></select></div>
+   </div>
+   <div class="extra-settings"><label class="toggle"><input id="showAttempts" type="checkbox" checked><span><b>Показывать последние попытки</b><small>Выводить ответы зрителей под словом</small></span></label><label class="toggle"><input id="autoStart" type="checkbox" checked><span><b>Автоматически запускать следующий раунд</b><small>После того как зритель угадает слово</small></span></label></div>
+   <button id="create" class="create-button">Создать оверлей и получить ссылку <span>→</span></button>
+   <div id="result" class="result" hidden><b>Оверлей создан</b><p>Скопируй эту ссылку в Browser Source в OBS:</p><div class="url-row"><input id="overlayUrl" readonly><button id="copy">Копировать</button></div><div class="obs-dimensions" id="dimensions"></div></div>
+   <div id="error" class="error" hidden></div>
+  </div>
+  <aside class="builder-aside"><h3>Как добавить в OBS</h3><ol><li>Введи Twitch-канал и выбери параметры игры.</li><li>Нажми «Создать оверлей» — появится персональная ссылка.</li><li>В OBS добавь источник <b>Браузер</b> и вставь ссылку.</li><li>Укажи ширину и высоту, которые показаны рядом со ссылкой.</li></ol><div class="aside-note"><b>Команды в Twitch</b><code>!угадай старт</code><code>!угадай подсказка</code><code>!угадай стоп</code><code>!угадай турнир 5</code></div><a href="/control.html">Открыть расширенную панель управления ↗</a></aside>
+ </div>
+</section>
+<footer>WORD GUESS · Сайт настройки и Twitch-сервер · OBS Browser Source</footer>
+</main><script src="/site.js"></script><script src="/setup.js"></script></body></html>
