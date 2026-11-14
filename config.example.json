@@ -1,0 +1,15 @@
+{
+  "channel": "",
+  "revealDelay": 5,
+  "autoStart": true,
+  "theme": "Случайная тема",
+  "difficulty": "Любая длина",
+  "topics": ["Животные", "Еда", "Страны и города", "Игры", "Предметы", "Персонажи", "Техника"],
+  "customWords": [],
+  "hintInterval": 15,
+  "showAttempts": true,
+  "accent": "#ff955f",
+  "overlayWidth": 1000,
+  "overlayHeight": 300,
+  "tileSize": 96
+}
