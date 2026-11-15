@@ -105,5 +105,26 @@ function connect(){
  socket.onerror=()=>setStatus("Не удалось подключиться к Twitch IRC");
 }
 $("leaderboardPanel").style.display=p.get("attempts")==="0"?"none":"";
-$("leaderboardPanel").style.display=p.get("attempts")==="0"?"none":"";\nrender();connect();
+$("leaderboardPanel").style.display=p.get("attempts")==="0"?"none":"";
+let currentBuild="",updatePending=false,reloadTimer=null;
+async function readBuild(){
+ try{
+  const response=await fetch("./version.json?check="+Date.now(),{cache:"no-store"});
+  if(!response.ok)return;
+  const data=await response.json();
+  if(!data.version)return;
+  if(!currentBuild){currentBuild=data.version;return}
+  if(data.version!==currentBuild){
+   updatePending=true;
+   if(!playing)scheduleReload(1200);
+  }
+ }catch(e){}
+}
+function scheduleReload(delay){
+ if(reloadTimer)return;
+ reloadTimer=setTimeout(()=>location.reload(),delay);
+}
+setInterval(readBuild,60000);
+readBuild();
+render();connect();
 })();
