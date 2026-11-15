@@ -67,20 +67,37 @@ function startRound(){
  hintTimer=setInterval(()=>{if(!playing)return;const hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i]}nextHint=interval*1000;render()},interval*1000);
  const tick=setInterval(()=>{if(!playing){clearInterval(tick);return}nextHint=Math.max(0,nextHint-1000);$("countdown").textContent="НОВАЯ БУКВА ЧЕРЕЗ "+Math.ceil(nextHint/1000)+" СЕК."},1000);
 }
-function stop(){playing=false;clearInterval(hintTimer);if(updatePending)scheduleReload(1200);setStatus("Игра остановлена");$("countdown").textContent="ИГРА ОСТАНОВЛЕНА";render()}
+function stop(){playing=false;clearInterval(hintTimer);if(updatePending)scheduleReload(700);setStatus("Игра остановлена");$("countdown").textContent="ИГРА ОСТАНОВЛЕНА";render()}
 function hint(){if(!playing)return;const hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i]}nextHint=interval*1000;render()}
 function win(user){
  playing=false;clearInterval(hintTimer);scores[user]=(scores[user]||0)+1;saveScores();renderLeaderboard();
  $("winnerName").textContent=user;$("winnerWord").textContent=word;$("winnerBanner").classList.remove("show");void $("winnerBanner").offsetWidth;$("winnerBanner").classList.add("show");
- setStatus("ПОБЕДИТЕЛЬ: "+user+" · "+word);if(updatePending)scheduleReload(5500);
- if(tournament){tournamentRound++;if(tournamentRound>=tournament){tournament=0;tournamentRound=0;setTimeout(()=>{$("winnerBanner").classList.remove("show");word="";mask=[];render();setStatus("ТУРНИР ЗАВЕРШЁН")},5000);return}}
+ setStatus("ПОБЕДИТЕЛЬ: "+user+" · "+word);
+ if(tournament){
+  tournamentRound++;
+  if(tournamentRound>=tournament){
+   tournament=0;tournamentRound=0;
+   setTimeout(()=>{$("winnerBanner").classList.remove("show");word="";mask=[];render();setStatus("ТУРНИР ЗАВЕРШЁН");if(updatePending)scheduleReload(700)},5000);
+   return;
+  }
+  if(updatePending){setTimeout(()=>{if(!playing)scheduleReload(400)},4200);return}
+  if(p.get("auto")!=="0")setTimeout(()=>{if(!playing){word="";mask=[];startRound()}},5000);
+  return;
+ }
+ if(updatePending){scheduleReload(4200);return}
  if(p.get("auto")!=="0")setTimeout(()=>{if(!playing){word="";mask=[];startRound()}},5000);
 }
 function isMod(tags){return tags.mod==="1"||String(tags.badges||"").split(",").some(x=>/^(broadcaster|moderator)\//.test(x))}
 function command(msg,user,tags){
  const c=msg.trim().toLowerCase();
  if(c==="!угадай статус"){setStatus(playing?"Игра идёт · раунд "+round:"Игра не запущена");return true}
- if(c==="!угадай обновить"){setStatus("Принудительное обновление…");scheduleReload(500);return true}
+ if(c==="!угадай обновить"){
+  if(!isMod(tags))return false;
+  updatePending=true;
+  if(playing)setStatus("Обновление запланировано после текущего раунда");
+  else{setStatus("Загружаю актуальную версию…");scheduleReload(500)}
+  return true;
+ }
  if(!isMod(tags))return false;
  if(c==="!угадай старт"){manualStop=false;startRound();return true}
  if(c==="!угадай подсказка"){hint();return true}
@@ -122,9 +139,13 @@ async function readBuild(){
 }
 function scheduleReload(delay){
  if(reloadTimer)return;
- reloadTimer=setTimeout(()=>location.reload(),delay);
+ reloadTimer=setTimeout(()=>{
+  const target=new URL(location.href);
+  target.searchParams.set("_refresh",String(Date.now()));
+  location.replace(target.toString());
+ },delay);
 }
-setInterval(readBuild,60000);
+setInterval(readBuild,30000);
 readBuild();
 render();connect();
 })();
