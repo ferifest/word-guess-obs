@@ -87,12 +87,12 @@ function win(user){
  if(updatePending){scheduleReload(4200);return}
  if(p.get("auto")!=="0")setTimeout(()=>{if(!playing){word="";mask=[];startRound()}},5000);
 }
-function isMod(tags){return tags.mod==="1"||String(tags.badges||"").split(",").some(x=>/^(broadcaster|moderator)\//.test(x))}
+function isMod(tags,nick){return String(nick||"").toLowerCase()===channel||tags.mod==="1"||String(tags.badges||"").split(",").some(x=>/^(broadcaster|moderator)\//.test(x))}
 function command(msg,user,tags){
  const c=msg.trim().toLowerCase();
  if(c==="!угадай статус"){setStatus(playing?"Игра идёт · раунд "+round:"Игра не запущена");return true}
  if(c==="!угадай обновить"){
-  if(!isMod(tags))return false;
+  if(!isMod(tags,user))return false;
   updatePending=true;
   if(playing)setStatus("Обновление запланировано после текущего раунда");
   else{setStatus("Загружаю актуальную версию…");scheduleReload(500)}
