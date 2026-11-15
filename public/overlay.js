@@ -105,5 +105,5 @@ function connect(){
  socket.onerror=()=>setStatus("Не удалось подключиться к Twitch IRC");
 }
 $("leaderboardPanel").style.display=p.get("attempts")==="0"?"none":"";
-render();connect();
+$("leaderboardPanel").style.display=p.get("attempts")==="0"?"none":"";\nrender();connect();
 })();
