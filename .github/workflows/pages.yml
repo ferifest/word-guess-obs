@@ -26,12 +26,12 @@ jobs:
         env:
           BUILD_SHA: ${{ github.sha }}
         run: |
-          printf '{"version":"%s"}\\n' "$BUILD_SHA" > public/version.json
+          printf '{"version":"%s"}\n' "$BUILD_SHA" > public/version.json
           python3 - <<'PY'
           import os, re
           from pathlib import Path
           build = os.environ["BUILD_SHA"]
-          pattern = re.compile(r'(\\./(?:style\\.css|overlay\\.js|site\\.js|setup\\.js))(\\?v=[^"]*)?')
+          pattern = re.compile(r'(\./(?:style\.css|overlay\.js|site\.js|setup\.js))(\?v=[^"]*)?')
           for name in ("index.html", "setup.html", "overlay.html"):
               path = Path("public") / name
               source = path.read_text(encoding="utf-8")
