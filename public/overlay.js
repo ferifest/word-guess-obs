@@ -36,10 +36,16 @@ function getPools(){
  return Object.fromEntries(Object.entries(result).filter(([,v])=>v.length));
 }
 const usedStorageKey="wordguess-used-v2:"+channel+":"+theme+":"+difficulty;
-let usedWords=new Set();
-try{const stored=JSON.parse(localStorage.getItem(usedStorageKey)||"[]");if(Array.isArray(stored))usedWords=new Set(stored)}catch(e){}
+const noRepeatSessionMs=18*60*60*1000;
+let usedWords=new Set(),sessionStartedAt=Date.now();
+try{
+ const stored=JSON.parse(localStorage.getItem(usedStorageKey)||"null");
+ if(stored&&Array.isArray(stored.used)&&Number.isFinite(stored.startedAt)&&Date.now()-stored.startedAt<noRepeatSessionMs){
+  usedWords=new Set(stored.used);sessionStartedAt=stored.startedAt;
+ }
+}catch(e){}
 let pools=getPools();
-function saveUsedWords(){try{localStorage.setItem(usedStorageKey,JSON.stringify([...usedWords]))}catch(e){}}
+function saveUsedWords(){try{localStorage.setItem(usedStorageKey,JSON.stringify({startedAt:sessionStartedAt,used:[...usedWords]}))}catch(e){}}
 function chooseWord(){
  const candidates=Object.entries(pools).flatMap(([key,list])=>list.map(value=>({word:value,category:key}))).filter(item=>!usedWords.has(item.word));
  if(!candidates.length)return null;
