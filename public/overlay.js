@@ -80,6 +80,7 @@ function isMod(tags){return tags.mod==="1"||String(tags.badges||"").split(",").s
 function command(msg,user,tags){
  const c=msg.trim().toLowerCase();
  if(c==="!угадай статус"){setStatus(playing?"Игра идёт · раунд "+round:"Игра не запущена");return true}
+ if(c==="!угадай обновить"){setStatus("Принудительное обновление…");scheduleReload(500);return true}
  if(!isMod(tags))return false;
  if(c==="!угадай старт"){manualStop=false;startRound();return true}
  if(c==="!угадай подсказка"){hint();return true}
