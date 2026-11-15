@@ -22,9 +22,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      - name: Stamp deployed version
+      - name: Stamp build and cache-bust browser assets
+        env:
+          BUILD_SHA: ${{ github.sha }}
         run: |
-          printf '{"version":"%s"}\n' "${GITHUB_SHA}" > public/version.json
+          printf '{"version":"%s"}\\n' "$BUILD_SHA" > public/version.json
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          build = os.environ["BUILD_SHA"]
+          pattern = re.compile(r'(\\./(?:style\\.css|overlay\\.js|site\\.js|setup\\.js))(\\?v=[^"]*)?')
+          for name in ("index.html", "setup.html", "overlay.html"):
+              path = Path("public") / name
+              source = path.read_text(encoding="utf-8")
+              source = pattern.sub(lambda m: m.group(1) + "?v=" + build, source)
+              path.write_text(source, encoding="utf-8")
+          PY
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
