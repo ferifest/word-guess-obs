@@ -19,8 +19,8 @@ function filterLength(pool){return pool.filter(w=>w.length>=4&&w.length<=10&&(di
 function getPools(){
  const custom=(p.get("words")||"").split(/[\n,;]+/).map(norm).filter(x=>x.length>=4&&x.length<=20);
  const keys=theme==="all"?Object.keys(banks):[theme],result={};
- keys.forEach(k=>{if(banks[k])result[k]=filterLength(banks[k]);});
- if(custom.length)result.custom=filterLength(custom);
+ keys.forEach(k=>{if(banks[k])result[k]=filterLength([...new Set(banks[k].map(norm))]);});
+ if(custom.length)result.custom=filterLength([...new Set(custom)]);
  return Object.fromEntries(Object.entries(result).filter(([,v])=>v.length));
 }
 let pools=getPools();
