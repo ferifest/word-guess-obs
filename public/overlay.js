@@ -67,12 +67,12 @@ function startRound(){
  hintTimer=setInterval(()=>{if(!playing)return;const hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i]}nextHint=interval*1000;render()},interval*1000);
  const tick=setInterval(()=>{if(!playing){clearInterval(tick);return}nextHint=Math.max(0,nextHint-1000);$("countdown").textContent="НОВАЯ БУКВА ЧЕРЕЗ "+Math.ceil(nextHint/1000)+" СЕК."},1000);
 }
-function stop(){playing=false;clearInterval(hintTimer);setStatus("Игра остановлена");$("countdown").textContent="ИГРА ОСТАНОВЛЕНА";render()}
+function stop(){playing=false;clearInterval(hintTimer);if(updatePending)scheduleReload(1200);setStatus("Игра остановлена");$("countdown").textContent="ИГРА ОСТАНОВЛЕНА";render()}
 function hint(){if(!playing)return;const hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i]}nextHint=interval*1000;render()}
 function win(user){
  playing=false;clearInterval(hintTimer);scores[user]=(scores[user]||0)+1;saveScores();renderLeaderboard();
  $("winnerName").textContent=user;$("winnerWord").textContent=word;$("winnerBanner").classList.remove("show");void $("winnerBanner").offsetWidth;$("winnerBanner").classList.add("show");
- setStatus("ПОБЕДИТЕЛЬ: "+user+" · "+word);
+ setStatus("ПОБЕДИТЕЛЬ: "+user+" · "+word);if(updatePending)scheduleReload(5500);
  if(tournament){tournamentRound++;if(tournamentRound>=tournament){tournament=0;tournamentRound=0;setTimeout(()=>{$("winnerBanner").classList.remove("show");word="";mask=[];render();setStatus("ТУРНИР ЗАВЕРШЁН")},5000);return}}
  if(p.get("auto")!=="0")setTimeout(()=>{if(!playing){word="";mask=[];startRound()}},5000);
 }
