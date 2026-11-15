@@ -183,3 +183,34 @@ body.setup-body{
 @keyframes spark-pulse{0%,100%{opacity:.55;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
 @keyframes leader-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.winner-banner.show,.winner-spark,.leader-row{animation:none!important}.winner-banner.show{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+/* OBS overlay: transparent canvas with only the rounded widget surface */
+html:has(body.overlay-body){background:transparent!important;background-color:transparent!important}
+body.overlay-body{
+ background:transparent!important;background-color:transparent!important;
+ padding:0!important;margin:0!important;overflow:hidden!important;
+}
+body.overlay-body .frame{
+ width:min(calc(100% - 12px),var(--overlay-width));
+ margin:6px auto 0;
+ border-radius:28px;
+ background-clip:padding-box;
+ isolation:isolate;
+}
+body.overlay-body .frame:before{border-radius:21px}
+body.overlay-body .brand{font-size:16px}
+body.overlay-body .round{font-size:11px}
+body.overlay-body .category{font-size:11px;letter-spacing:1.25px}
+body.overlay-body .countdown{font-size:11px;letter-spacing:.65px}
+body.overlay-body .tile{font-size:clamp(36px,4.3vw,58px);border-radius:14px}
+body.overlay-body .placeholder{font-size:14px}
+body.overlay-body .length{font-size:12px;padding:6px 12px}
+body.overlay-body .hint-info{font-size:11px}
+body.overlay-body .section-title{font-size:11px}
+body.overlay-body .leader-row{min-height:31px;padding:6px 9px}
+body.overlay-body .leader-rank{font-size:11px}
+body.overlay-body .leader-nick{font-size:12px}
+body.overlay-body .leader-score{font-size:11px}
+body.overlay-body .empty{font-size:12px}
+body.overlay-body .status{font-size:10px}
+@media(prefers-reduced-motion:reduce){body.overlay-body .leader-row{animation:none!important}}
