@@ -112,8 +112,14 @@ function stop(){playing=false;clearInterval(hintTimer);if(updatePending)schedule
 function hint(){if(!playing)return;const hidden=mask.map((x,i)=>x==="•"?i:-1).filter(i=>i>=0);if(hidden.length){const i=hidden[Math.floor(Math.random()*hidden.length)];mask[i]=word[i]}nextHint=interval*1000;render()}
 function win(user){
  playing=false;clearInterval(hintTimer);scores[user]=(scores[user]||0)+1;saveScores();renderLeaderboard();
- $("winnerName").textContent=user;$("winnerWord").textContent=word;$("winnerBanner").classList.remove("show");void $("winnerBanner").offsetWidth;$("winnerBanner").classList.add("show");
- setStatus("ПОБЕДИТЕЛЬ: "+user+" · "+word);
+ const winningWord=word;
+ $("winnerName").textContent=user;$("winnerWord").textContent=winningWord;
+ $("winnerBanner").classList.remove("show");
+ mask=[...winningWord];render();
+ const wordRow=$("word");wordRow.classList.remove("winner-reveal");void wordRow.offsetWidth;wordRow.classList.add("winner-reveal");
+ [...wordRow.children].forEach((tile,i)=>{tile.style.setProperty("--tile-index",i)});
+ setStatus("ПРАВИЛЬНЫЙ ОТВЕТ: "+user+" · "+winningWord);
+ setTimeout(()=>{if(word===winningWord){void $("winnerBanner").offsetWidth;$("winnerBanner").classList.add("show")}},1050);
  if(tournament){
   tournamentRound++;
   if(tournamentRound>=tournament){
