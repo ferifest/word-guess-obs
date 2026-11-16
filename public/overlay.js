@@ -36,7 +36,7 @@ tech:["СМАРТЧАСЫ","ФИТНЕСБРАСЛЕТ","ЭЛЕКТРОННАЯ�
 for(const [key,items] of Object.entries(marathonBanks)) banks[key].push(...items);
 
 let word="",mask=[],round=0,playing=false,hintTimer=null,socket=null,manualStop=false,tournament=0,tournamentRound=0,currentCategory="",nextHint=interval*1000,lastWord="";
-const categoryNames={animals:"ЖИВОТНЫЕ",food:"ЕДА",places:"СТРАНЫ И ГОРОДА",games:"ВИДЕОИГРЫ",objects:"ПРЕДМЕТЫ",characters:"ПЕРСОНАЖИ",tech:"ТЕХНИКА",custom:"СВОИ СЛОВА"};
+const categoryNames={animals:"ЖИВОТНЫЕ",food:"ЕДА",places:"СТРАНЫ И ГОРОДА",games:"ВИДЕОИГРЫ",objects:"ПРЕДМЕТЫ",tech:"ТЕХНИКА",custom:"СВОИ СЛОВА"};
 function norm(s){return s.toLocaleUpperCase("ru-RU").replace(/Ё/g,"Е").replace(/[^А-ЯA-Z0-9]/g,"")}
 function filterLength(pool){return pool.filter(w=>w.length>=4&&w.length<=10&&(difficulty==="short"?w.length<=5:difficulty==="medium"?w.length>=6&&w.length<=7:difficulty==="long"?w.length>=8:true))}
 function getPools(){
@@ -119,6 +119,15 @@ function win(user){
  if(p.get("auto")!=="0")setTimeout(()=>{if(!playing){word="";mask=[];startRound()}},5000);
 }
 function isMod(tags,nick){return String(nick||"").toLowerCase()===channel||tags.mod==="1"||String(tags.badges||"").split(",").some(x=>/^(broadcaster|moderator)\//.test(x))}
+function skipRound(){
+ if(!playing||!word)return;
+ const skipped=word;playing=false;clearInterval(hintTimer);$("winnerBanner").classList.remove("show");
+ if(tournament){tournamentRound++;if(tournamentRound>=tournament){tournament=0;tournamentRound=0;setStatus("ТУРНИР ЗАВЕРШЁН · ПРОПУЩЕНО: "+skipped);word="";mask=[];render();if(updatePending)scheduleReload(1000);return}}
+ setStatus("ПРОПУЩЕНО: "+skipped);
+ if(updatePending){scheduleReload(1200);return}
+ if(p.get("auto")!=="0")setTimeout(()=>{if(!playing){word="";mask=[];startRound()}},1200);
+ else{word="";mask=[];render()}
+}
 function command(msg,user,tags){
  const c=msg.trim().toLowerCase();
  if(c==="!угадай статус"){setStatus(playing?"Игра идёт · раунд "+round:"Игра не запущена");return true}
@@ -132,6 +141,7 @@ function command(msg,user,tags){
  if(!isMod(tags))return false;
  if(c==="!угадай старт"){manualStop=false;startRound();return true}
  if(c==="!угадай подсказка"){hint();return true}
+ if(c==="!угадай пропустить"){skipRound();return true}
  if(c==="!угадай стоп"){manualStop=true;stop();return true}
  const m=c.match(/^!угадай турнир\s+(\d{1,2})$/);if(m){tournament=Math.max(1,Math.min(20,Number(m[1])));tournamentRound=0;startRound();return true}
  return false;
