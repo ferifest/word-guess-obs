@@ -221,3 +221,25 @@ body.overlay-body .category{
  font-weight:900!important;
  text-shadow:0 1px 10px rgba(255,255,255,.18);
 }
+
+
+/* Sequential letter reveal and winner announcement */
+body.overlay-body .word.winner-reveal{perspective:900px}
+body.overlay-body .word.winner-reveal .tile{
+ transform-origin:center bottom;
+ animation:word-letter-snap .62s cubic-bezier(.16,1,.3,1) both;
+ animation-delay:calc(var(--tile-index,0)*65ms);
+}
+@keyframes word-letter-snap{
+ 0%{opacity:0;transform:translate3d(0,22px,0) rotateX(-75deg) scale(.72);filter:blur(5px)}
+ 65%{opacity:1;transform:translate3d(0,-5px,0) rotateX(8deg) scale(1.08);filter:blur(0)}
+ 100%{opacity:1;transform:translate3d(0,0,0) rotateX(0) scale(1);filter:blur(0)}
+}
+body.overlay-body .winner-banner.show{animation:winner-pop .72s cubic-bezier(.16,1,.3,1) forwards}
+body.overlay-body .winner-name{animation:winner-name-in .55s .12s cubic-bezier(.16,1,.3,1) both}
+body.overlay-body .winner-word{animation:winner-word-in .55s .22s cubic-bezier(.16,1,.3,1) both}
+@keyframes winner-name-in{from{opacity:0;transform:translateY(12px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes winner-word-in{from{opacity:0;transform:translateY(9px) scale(.86)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+ body.overlay-body .word.winner-reveal .tile,body.overlay-body .winner-name,body.overlay-body .winner-word{animation:none!important}
+}
