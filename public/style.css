@@ -214,3 +214,10 @@ body.overlay-body .leader-score{font-size:11px}
 body.overlay-body .empty{font-size:12px}
 body.overlay-body .status{font-size:10px}
 @media(prefers-reduced-motion:reduce){body.overlay-body .leader-row{animation:none!important}}
+
+/* Make the active word theme unmistakably readable */
+body.overlay-body .category{
+ color:#fff!important;
+ font-weight:900!important;
+ text-shadow:0 1px 10px rgba(255,255,255,.18);
+}
